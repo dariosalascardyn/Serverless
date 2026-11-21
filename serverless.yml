@@ -7,7 +7,7 @@ provider:
   memorySize: 512
   timeout: 15
   iam:
-    role: arn:aws:iam::911545955675:role/LabRole
+    role: arn:aws:iam::590184144179:role/LabRole
   environment:
     MAIN_CLASS: duoc.cl.serverless.ServerlessApplication
     MENSAJE_REMOTO: ${env:MENSAJE_REMOTO, 'Valor por defecto'}
@@ -18,7 +18,8 @@ package:
 functions:
   saludar:
     handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
-    url: true
+    url:
+      cors: true
 
 resources:
   Resources:
@@ -26,6 +27,7 @@ resources:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName: !Ref SaludarLambdaFunction
-        Action: lambda:InvokeFunction
+        Action: lambda:InvokeFunctionUrl
         Principal: "*"
+        FunctionUrlAuthType: NONE
         InvokedViaFunctionUrl: true
