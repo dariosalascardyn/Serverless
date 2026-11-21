@@ -1,0 +1,31 @@
+service: duoc-serverless-java
+
+provider:
+  name: aws
+  runtime: java21
+  region: us-east-1
+  memorySize: 512
+  timeout: 15
+  iam:
+    role: arn:aws:iam::911545955675:role/LabRole
+  environment:
+    MAIN_CLASS: duoc.cl.serverless.ServerlessApplication
+    MENSAJE_REMOTO: ${env:MENSAJE_REMOTO, 'Valor por defecto'}
+
+package:
+  artifact: target/serverless-0.0.1-SNAPSHOT-aws.jar
+
+functions:
+  saludar:
+    handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
+    url: true
+
+resources:
+  Resources:
+    SaludarPublicInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref SaludarLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: "*"
+        InvokedViaFunctionUrl: true
